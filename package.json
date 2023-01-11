@@ -1,0 +1,15 @@
+{
+  "name": "evanpatchouli-mysql",
+  "version": "1.0.1",
+  "type": "module",
+  "description": "nodejs mysql tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "evanpatchouli",
+  "license": "ISC",
+  "devDependencies": {
+    "mysql": "^2.18.1"
+  }
+}
