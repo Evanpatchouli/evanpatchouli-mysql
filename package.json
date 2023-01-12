@@ -1,14 +1,26 @@
 {
   "name": "evanpatchouli-mysql",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "type": "module",
   "description": "nodejs mysql tool",
+  "homepage": "https://github.com/Evanpatchouli/evanpatchouli-mysql#readme",
+  "bugs": {
+    "url": "https://github.com/Evanpatchouli/evanpatchouli-mysql/issues",
+    "email": "3125019716@qq.com"
+  },
   "main": "index.js",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/Evanpatchouli/evanpatchouli-mysql.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "evanpatchouli",
-  "license": "ISC",
+  "author": {
+    "name": "evanpatchouli",
+    "email": "3125019716@qq.com"
+  },
+  "license": "MIT",
   "devDependencies": {
     "mysql": "^2.18.1"
   }
