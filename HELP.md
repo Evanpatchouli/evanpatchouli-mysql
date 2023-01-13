@@ -1,14 +1,18 @@
-# Node.js Tool for MySQL
+# evanpatchouli-mysql
 
 evanpatchouli-mysql is js-tool for MySQL, whick can help you use MySQL easier in node.
+
 This tool is at birth and it will grow up fastly in the future.
 
-# Latest Version: 1.0.5
+# Latest Version: 1.0.8
 
 **v1.0.5**:  
-realize **quick sql** with a new random connection which has a modifiable default conn config () is destroyed at once
+realize **quick sql** with a new random connection which has a modifiable default conn config and it is destroyed at once
+
 realize **quick conn** with parameters for a new conn config directly without a pool
+
 realize **pool conn** you can use a random conn in the pool or an exactly conn in the pool
+
 **notice:** when using **quick conn** and **pool conn**, you must manually close the conn and the pool
 
 # Install
@@ -22,20 +26,59 @@ https://github.com/Evanpatchouli/evanpatchouli-mysql
 
 # Useage
 
+**Tip:** the sql-action is a packaged Promise, I suggest to use **'async / await'**, but raw Promise also works if you prefer it.
+
+## Separate Introduction
 ```javascript
 import db from "evanpatchouli-mysql/lib/sql.js";
 ```
 
-## create connection pool
+### quick sql
+
+```javascript
+let result = db.get('select * from user');
+```
+
+### sql in a quick persistent conn
+
+```javascript
+let conn = await db.conn("localhost", 3306, "root", "root", "springdemo");
+let result = conn.get('select * from user');
+```
+
+### close a conn
+
+```javascript
+conn.close();
+```
+
+### init connection pool
 
 ```javascript
 // example db.pool.init(host, port, user, password, database)
 db.pool.init('localhost',3306,'root','root','springdemo');
 ```
 
-## do sql in pool
+### quick sql in pool
 
-**Tip:** the sql-action is a packaged Promise, I suggest to use **'async / await'**, but raw Promise also works if you prefer it.
+```javascript
+let result = db.pool.select('select * from user')
+```
+
+### do sql in a certain conn in pool
+
+```javascript
+let conn = db.pool.conn();
+let result = conn.select('select * from user')
+```
+
+### close pool
+
+```javascript
+db.pool.close();
+```
+
+## Complete example demos
 
 ```javascript
 // example sql actions
@@ -141,6 +184,7 @@ async function tset() {
     conn1.close();
     db.pool.close();
 }
+test();
 ```
 
 ### Result : Output
