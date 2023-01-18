@@ -4,6 +4,7 @@ async function tset() {
   console.log(
     "======================================TEST0======================================"
   );
+  db.mode = "debug";
   db.quickConnConfig.database = "springdemo";
   console.log("the default config of db's quick connection:");
   console.log(db.quickConnConfig, "\n");

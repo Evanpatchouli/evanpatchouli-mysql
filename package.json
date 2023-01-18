@@ -1,6 +1,6 @@
 {
   "name": "evanpatchouli-mysql",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "nodejs mysql tool",
   "homepage": "https://github.com/Evanpatchouli/evanpatchouli-mysql#readme",
   "bugs": {
