@@ -4,7 +4,7 @@ evanpatchouli-mysql is js-tool for MySQL, whick can help you use MySQL easier in
 
 This tool is at birth and it will grow up fastly in the future.
 
-# Latest Version: 1.0.8
+# Latest Version: 1.0.9
 
 **v1.0.5**:  
 realize **quick sql** with a new random connection which has a modifiable default conn config and it is destroyed at once

@@ -1,7 +1,6 @@
 {
   "name": "evanpatchouli-mysql",
-  "version": "1.0.8",
-  "type": "module",
+  "version": "1.0.11",
   "description": "nodejs mysql tool",
   "homepage": "https://github.com/Evanpatchouli/evanpatchouli-mysql#readme",
   "bugs": {
@@ -10,11 +9,12 @@
   },
   "main": "index.js",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/Evanpatchouli/evanpatchouli-mysql.git"
+    "type": "git",
+    "url": "https://github.com/Evanpatchouli/evanpatchouli-mysql.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "babel-build": "babel lib/sql.js -d dist"
   },
   "keywords": [
     "mysql",
@@ -26,7 +26,15 @@
     "email": "3125019716@qq.com"
   },
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.20.7",
+    "@babel/core": "^7.20.12",
+    "@babel/node": "^7.20.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.20.11",
+    "@babel/preset-env": "^7.20.2"
   }
 }

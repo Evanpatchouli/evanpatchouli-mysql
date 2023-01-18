@@ -4,16 +4,25 @@ evanpatchouli-mysql is js-tool for MySQL, whick can help you use MySQL easier in
 
 This tool is at birth and it will grow up fastly in the future.
 
-# Latest Version: 1.0.8
+# Latest Version: 1.0.11
 
-**v1.0.5**:  
-realize **quick sql** with a new random connection which has a modifiable default conn config and it is destroyed at once
+**v1.0.11**: 
 
-realize **quick conn** with parameters for a new conn config directly without a pool
+**Compiled into CommonJs:** since v1.0.11, the sql.js module will be compiled into commonjs by babel, and you can enjoy it with both of cjs and mjs. 
 
-realize **pool conn** you can use a random conn in the pool or an exactly conn in the pool
+**Standardlize:** the function name in conn, pool and db. One of my friend told me that the name "get" confused him to think it as "get a connection", and this is just when I realized that I should make the names more clear and easy at the same time.
 
-**notice:** when using **quick conn** and **pool conn**, you must manually close the conn and the pool
+**Three New functions:** 
+
+- getDbs: get all db names with your conn.
+
+- getTbs: get all tables' name from your conn's default db or a db you assign.
+
+- getTbStruct: get the construction of a table you assign from your conn's default.
+
+**notice:** when using **a certain conn** and **pool conn**, you must manually close the conn and the pool
+
+**notice:** the example codes below are still staying at v1.0.10.
 
 # Install
 
@@ -29,9 +38,18 @@ https://github.com/Evanpatchouli/evanpatchouli-mysql
 **Tip:** the sql-action is a packaged Promise, I suggest to use **'async / await'**, but raw Promise also works if you prefer it.
 
 ## Separate Introduction
+type: "Moudle"  
+
 ```javascript
 import db from "evanpatchouli-mysql/lib/sql.js";
 ```
+
+type: "CommonJs"  
+
+```javascript
+let db = require("./dist/sql.js").default;
+```
+
 
 ### quick sql
 
