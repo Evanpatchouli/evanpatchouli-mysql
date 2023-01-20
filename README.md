@@ -4,7 +4,11 @@ evanpatchouli-mysql is js-tool for MySQL, whick can help you use MySQL easier in
 
 This tool is at birth and it will grow up fastly in the future.
 
-# Latest Version: 1.0.12
+# Latest Version: 1.0.13
+
+**v1.0.13**: 
+
+**JsDoc** has been added!
 
 **v1.0.12**: 
 

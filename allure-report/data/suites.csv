@@ -1,0 +1,2 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Thu Jan 19 14:58:19 CST 2023","Thu Jan 19 14:58:20 CST 2023","175","","test\dbIns.test.js","","test\dbIns.test.js","insert into user","insert into user",""

@@ -4,7 +4,11 @@ evanpatchouli-mysql is js-tool for MySQL, whick can help you use MySQL easier in
 
 This tool is at birth and it will grow up fastly in the future.
 
-# Latest Version: 1.0.12
+# Latest Version: 1.0.13
+
+**v1.0.13**: 
+
+**JsDoc** has been added!
 
 **v1.0.12**: 
 
@@ -15,16 +19,6 @@ This tool is at birth and it will grow up fastly in the future.
 **One New Feature:** the db has mode! It has two options: "debug" and "non-debug", you can set it at db.mode, the "non-debug" mode only returns one of the entire mysql.js result, and "debug" mode returns entirely, with the sql str and some message printed in console working like sql log.
 
 **One New Change:** under "non-debug" mode, the action like **update**, **insert**, **delete** will all return one number, and the meanings are a bit different between them: **upd**, return the result = affectedRows + changedRows - 1, and it's easy to understand the three value of it, 1 means success, 0 means the new is the same as new, -1 means the target record doesn't exist.**insert** and **delete** return affectedRows, 1 means success and 0 instead.
-
-**Three New functions:** 
-
-- getDbs: get all db names with your conn.
-
-- getTbs: get all tables' name from your conn's default db or a db you assign.
-
-- getTbStruct: get the construction of a table you assign from your conn's default.
-
-**notice:** when using **a certain conn** and **pool conn**, you must manually close the conn and the pool
 
 # Install
 
