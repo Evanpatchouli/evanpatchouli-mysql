@@ -1,9 +1,9 @@
-declare module './lib/sql.js' {
+export module './lib/sql.js' {
     const content: any
     export = content
 }
 
-declare interface PoolConfig {
+export interface PoolConfig {
    host: string;
    port: number;
    user: string;
@@ -16,7 +16,7 @@ declare interface PoolConfig {
    connlimit: 10;
 }
 
-declare interface ConnConfig {
+export interface ConnConfig {
     host: string
     port: number
     user: string
@@ -24,7 +24,7 @@ declare interface ConnConfig {
     database: string
 }
 
-declare interface ConnInPool {
+export interface ConnInPool {
     /**
      * @type {import("mysql").Connection}
      */
@@ -124,7 +124,7 @@ declare interface ConnInPool {
  * @property {function} switch                  - switch this conn to use another database
  * @property {function} close                   - destroy this conn
  */
-declare interface ConnOutPool {
+ export interface ConnOutPool {
     /**
      * @type {import("mysql").Connection}
      */
@@ -200,7 +200,7 @@ declare interface ConnOutPool {
     close(): void;
 }
 
-declare interface Pool {
+export interface Pool {
     /**
      * The config of pool conn
      */
@@ -329,7 +329,7 @@ declare interface Pool {
  * @property {function} getTbStruct         - get the struct of a table one-off
  * 
  */
-declare interface Db {
+export interface Db {
     /**
      * @default
      */

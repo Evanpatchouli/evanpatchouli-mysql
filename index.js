@@ -1,3 +1,6 @@
+/**
+ * @type {import("./lib/sql.js.js").Db}
+ */
 let db = require("./dist/sql.js").default;
 
 // async function test() {

@@ -1,6 +1,6 @@
 {
   "name": "evanpatchouli-mysql",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "nodejs mysql tool",
   "?type": "when dev, if you want directlly use sql.js, change type to module, ofcourse, i suggest after babel, do test under test package",
   "type": "commonjs",
