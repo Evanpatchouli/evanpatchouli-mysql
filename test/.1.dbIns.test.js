@@ -1,4 +1,4 @@
-let db = require("../dist/sql.js").default;
+let db = require("../index.js");
 
 test('insert into user', async ()=>{
     db.quickConnConfig.database = "evanpatchouli_mysql_test";
@@ -8,4 +8,5 @@ test('insert into user', async ()=>{
     console.log(expt);
     console.log(rs);
     expect(rs).toStrictEqual(expt);
+    
 });

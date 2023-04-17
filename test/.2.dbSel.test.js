@@ -1,4 +1,4 @@
-let db = require("../dist/sql.js").default;
+let db = require("../index.js");
 
 test('select * from user', async ()=>{
     db.quickConnConfig.database = "evanpatchouli_mysql_test";
@@ -10,4 +10,8 @@ test('select * from user', async ()=>{
     console.log('expect:\n',expt);
     console.log('result:\n',rs);
     expect(rs).toStrictEqual(expt);
+    rs = storage.get("rs");
+    console.log("test2: "+ rs);
+    let all = storage.getAll();
+    console.log("test2-all: ", all);
 });

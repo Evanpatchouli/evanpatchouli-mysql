@@ -4,7 +4,17 @@ evanpatchouli-mysql is js-tool for MySQL, whick can help you use MySQL easier in
 
 This tool is at birth and it will grow up fastly in the future.
 
-# Latest Version: 1.0.13
+# Latest Version: 1.0.18
+
+**v1.0.18**: add two functions: **newDb** and **delDb**
+
+**v1.0.17**: a patch, export bug has been fixed
+
+**v1.0.16**: a patch
+
+**v1.0.15**: a patch
+
+**v1.0.14**: a patch
 
 **v1.0.13**: 
 
@@ -43,14 +53,14 @@ import db from "evanpatchouli-mysql/lib/sql.js";
 type: "CommonJs"  
 
 ```javascript
-let db = require("./dist/sql.js").default;
+let db = require("../index.js");
 ```
 
 
 ### quick sql
 
 ```javascript
-let result = db.get('select * from user');
+let result = db.sel('select * from user');
 ```
 
 ### sql in a quick persistent conn
@@ -100,7 +110,7 @@ these codes below are running in "non-debug" mode
 // example sql actions
 // TEST0 does three things: 
 // 1. Show the quick sql's conn' config
-// 2. Do a quick sql: db.get(sql) means select. (get => select / fix => update / add => insert / del => delete)
+// 2. Do a quick sql: db.get(sql) means select. (sel => select / upd => update / ins => insert / del => delete)
 // 3. Get a quick conn named 'conn0' and do quick sql in this conn, and close it after i finish my works.
 async function tset() {
     console.log('======================================TEST0======================================')

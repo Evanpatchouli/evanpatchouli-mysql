@@ -1,4 +1,4 @@
-let db = require("../dist/sql.js").default;
+let db = require("../index.js");
 
 test('update user', async ()=>{
     db.quickConnConfig.database = "evanpatchouli_mysql_test";
