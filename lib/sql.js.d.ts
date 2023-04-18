@@ -4,16 +4,16 @@ export module './lib/sql.js' {
 }
 
 export interface PoolConfig {
-   host: string;
-   port: number;
-   user: string;
-   password: string;
-   database: string;
-   /**
-    * @type {number}
-    * @default
-    */
-   connlimit: 10;
+    host: string;
+    port: number;
+    user: string;
+    password: string;
+    database: string;
+    /**
+     * @type {number}
+     * @default
+     */
+    connlimit: 10;
 }
 
 export interface ConnConfig {
@@ -28,85 +28,85 @@ export interface ConnInPool {
     /**
      * @type {import("mysql").Connection}
      */
-     conn: import("mysql").Connection;
-     /**
-      * @type {ConnConfig}
-      */
-     config: ConnConfig;
-     /**
-      * do select with this persistent conn in pool
-      * @async
-      * @param {!string} sql  - select sql
-      * @returns {Promise<Array<Object>>} a promise, if success, it would be this sql result (records)
-      */
-     async sel(sql: string): Promise<Array<Object>>;
- 
-     /**
-      * do update with this persistent conn in pool
-      * @async
-      * @param {!string} sql - update sql
-      * @returns {Promise<number>} a promise, if success, it would be = this sql result's affectedRows + changedRows - 1
-      */
-     async upd(sql: string): Promise<number>;
- 
-     /**
-      * do insert with this persistent conn in pool
-      * @async
-      * @param {!string} sql - insert sql
-      * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
-      */
-     async ins(sql: string): Promise<number>;
- 
-     /**
-      * de delete with this persistent conn in pool
-      * @async
-      * @param {!string} sql - delete sql
-      * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
-      */
-     async del(sql: string): Promise<number>;
- 
-     async newDb(name: string, character: string, collation: string): Promise<T>;
- 
-     async delDb(name: string): Promise<T>;
- 
-     /**
-      * get all db's name
-      * @async
-      * @returns {Promise<Array<Map<dbname,string>>} a promise, if success, it would be a list of db names and the key is "dbname"
-      */
-    async getDbs(): Promise<Array<Map<dbname,string>>>;
- 
-     /**
-      * get tables' name from a db.
-      * if dbname is not assigned clearly, it would be this conn default database
-      * @async
-      * @param {string|undefined|null|""} dbname 
-      * @returns {Promise<Array<Map<tbname,string>>} a promise, if success, it would be a list of table names and the key is "tbname", like [{ tbname: "user" }]
-      */
-    async getTbs(dbname: string|undefined|null|""): Promise<Array<Map<tbname,string>>>;
- 
-     /**
-      * get a tables' struct
-      * @async
-      * @param {string} tbname 
-      * @returns {Promise<Array<Map<any,string>>} construction of a table
-      */
-    async getTbStruct(tbname: string): Promise<Array<Map<any,string>>>;
- 
-     /**
-      * switch this conn to use another database
-      * @param {!string} dbname - the database's name you want switch to use
-      */
-    siwtch(dbname: string): void;
- 
-     /**
-      * Release this conn
-      */
-     free(): void;
- 
+    conn: import("mysql").Connection;
     /**
-      * Destroy this conn
-      */
+     * @type {ConnConfig}
+     */
+    config: ConnConfig;
+    /**
+     * do select with this persistent conn in pool
+     * @async
+     * @param {!string} sql  - select sql
+     * @returns {Promise<Array<Object>>} a promise, if success, it would be this sql result (records)
+     */
+    async sel(sql: string): Promise<Array<Object>>;
+
+    /**
+     * do update with this persistent conn in pool
+     * @async
+     * @param {!string} sql - update sql
+     * @returns {Promise<number>} a promise, if success, it would be = this sql result's affectedRows + changedRows - 1
+     */
+    async upd(sql: string): Promise<number>;
+
+    /**
+     * do insert with this persistent conn in pool
+     * @async
+     * @param {!string} sql - insert sql
+     * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
+     */
+    async ins(sql: string): Promise<number>;
+
+    /**
+     * de delete with this persistent conn in pool
+     * @async
+     * @param {!string} sql - delete sql
+     * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
+     */
+    async del(sql: string): Promise<number>;
+
+    async newDb(name: string, character: string, collation: string): Promise<T>;
+
+    async delDb(name: string): Promise<T>;
+
+    /**
+     * get all db's name
+     * @async
+     * @returns {Promise<Array<Map<dbname,string>>} a promise, if success, it would be a list of db names and the key is "dbname"
+     */
+    async getDbs(): Promise<Array<Map<dbname, string>>>;
+
+    /**
+     * get tables' name from a db.
+     * if dbname is not assigned clearly, it would be this conn default database
+     * @async
+     * @param {string|undefined|null|""} dbname 
+     * @returns {Promise<Array<Map<tbname,string>>} a promise, if success, it would be a list of table names and the key is "tbname", like [{ tbname: "user" }]
+     */
+    async getTbs(dbname: string | undefined | null | ""): Promise<Array<Map<tbname, string>>>;
+
+    /**
+    * get a tables' struct
+    * @async
+    * @param {string} tbname 
+    * @returns {Promise<Array<Map<any,string>>} construction of a table
+    */
+    async getTbStruct(tbname: string): Promise<Array<Map<any, string>>>;
+
+    /**
+    * switch this conn to use another database
+    * @param {!string} dbname - the database's name you want switch to use
+    */
+    switch(dbname: string): void;
+
+    /**
+    * Release this conn
+    */
+    free(): void;
+
+    /**
+    * Destroy this conn
+    */
     close(): void;
 }
 
@@ -124,7 +124,7 @@ export interface ConnInPool {
  * @property {function} switch                  - switch this conn to use another database
  * @property {function} close                   - destroy this conn
  */
- export interface ConnOutPool {
+export interface ConnOutPool {
     /**
      * @type {import("mysql").Connection}
      */
@@ -153,7 +153,7 @@ export interface ConnInPool {
      * @param {!string} sql - insert sql
      * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
      */
-    async ins(sql:string): Promise<number>;
+    async ins(sql: string): Promise<number>;
     /**
      * do delete
      * @async
@@ -171,7 +171,7 @@ export interface ConnInPool {
      * @async
      * @returns {Promise<Array<Map<dbname,string>>>} a promise, if success, it would be a list of db names and the key is "dbname"
      */
-    async getDbs(): Promise<Array<Map<dbname,string>>>;
+    async getDbs(): Promise<Array<Map<dbname, string>>>;
 
     /**
      * if dbname is not assigned clearly, it would be this conn default database
@@ -179,20 +179,20 @@ export interface ConnInPool {
      * @param {string|undefined|null|""} dbname 
      * @returns {Promise<Array<Map<tbname,string>>>} a promise, if success, it would be a list of table names and the key is "tbname", like [{ tbname: "user" }]
      */
-    async getTbs(dbname: string): Promise<Array<Map<tbname,string>>>;
+    async getTbs(dbname: string): Promise<Array<Map<tbname, string>>>;
 
     /**
      * @async
      * @param {string} tbname 
      * @returns {Promise<Array<Map<any,string>>>} construction of a table
      */
-    async getTbStruct(tbname: string): Promise<Array<Map<any,string>>>;
+    async getTbStruct(tbname: string): Promise<Array<Map<any, string>>>;
 
     /**
      * switch this conn to use another database
      * @param {!string} dbname - the database's name you want switch to use
      */
-    siwtch(dbname: string): void;
+    switch(dbname: string): void;
 
     /**
      * destroy this conn
@@ -205,12 +205,12 @@ export interface Pool {
      * The config of pool conn
      */
     config: PoolConfig;
-    
-    /**
-     * The pool
-     * @type {import("mysql").Pool}
-     */
-    sqlpool: mysql.Pool;
+
+    // /**
+    //  * The pool
+    //  * @type {import("mysql").Pool}
+    //  */
+    // private sqlpool: mysql.Pool;
 
     /**
      * to create a poolConnection
@@ -230,7 +230,7 @@ export interface Pool {
      * @returns {Promise<Array<Object>>} a promise, if success, it would be this sql result (records)
      */
     async sel(sql: string): Promise<Array<Object>>;
-    
+
     /**
      * do update with a one-off conn in pool
      * @async
@@ -245,7 +245,7 @@ export interface Pool {
      * @param {!string} sql - insert sql
      * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
      */
-     async ins(sql: string): Promise<number>;
+    async ins(sql: string): Promise<number>;
 
     /**
      * do delete with a one-off conn in pool
@@ -254,7 +254,7 @@ export interface Pool {
      * @return {Promise<number>} a promise, if success, it would be this sql result's affectedRows
      */
     async del(sql: string): Promise<number>;
-    
+
     /**
      * do create a new db with a one-off conn in pool
      * @async
@@ -278,7 +278,7 @@ export interface Pool {
      * @async
      * @return Promise, if success, it would be a list of db names and the key is "dbname"
      */
-    async getDbs(): Promise<Array<Map<dbname,string>>>;
+    async getDbs(): Promise<Array<Map<dbname, string>>>;
 
     /**
      * get all tb's name from a db with a one-off conn in pool.
@@ -287,7 +287,7 @@ export interface Pool {
      * @param {string|undefined|null|""} dbname 
      * @returns Promise, if success, it would be a list of table names and the key is "tbname", like [{ tbname: "user" }]
      */
-    async getTbs(dbname: string|undefined|null|""): Promise<Array<Map<tbname,string>>>;
+    async getTbs(dbname: string | undefined | null | ""): Promise<Array<Map<tbname, string>>>;
 
     /**
      * get struct of a table with a one-off conn
@@ -295,7 +295,7 @@ export interface Pool {
      * @param {string} tbname 
      * @returns Construction of a table
      */
-    async getTbStruct(tbname: string): Promise<Array<Map<any,string>>>;
+    async getTbStruct(tbname: string): Promise<Array<Map<any, string>>>;
 
     /**
      * End this poolconn
@@ -338,7 +338,7 @@ export interface Db {
      * @default
      */
     type: string = 'Object',
-    
+
     /**
      * db running mode, it's value must be "non-debug" or "debug", and default is "non-debug", under "debug" mode, the result will be complete and sql will be printed out. 
      * db 运行模式，它的值必须是"non-debug"或者"debug"，前者是初始默认值，在"debug"模式下，返回的结果将变得完整，并且sql语句将被打印出来
@@ -371,16 +371,21 @@ export interface Db {
     pool: Pool,
 
     /**
+     * @returns {Pool}
+     */
+    newPool(): Pool
+
+    /**
      * a function to print the sql error in console
      * @param err {Error}
      */
     throw(err: Error): void;
 
-    /**
-     * this is a method to get a raw conn from mysql.js with db's quickConnConfig
-     * @returns {import("mysql").Connection}
-     */
-    newconn(): import("mysql").Connection;
+    // /**
+    //  * this is a method to get a raw conn from mysql.js with db's quickConnConfig
+    //  * @returns {import("mysql").Connection}
+    //  */
+    // private newconn(): import("mysql").Connection;
 
     /**
      * Method to create a a lasting connection in db
@@ -391,7 +396,7 @@ export interface Db {
      * @param {string} database 
      * @returns {ConnOutPool} an object contains a lasting connection and some packaged functions
      */
-     async conn(host: string, port: number, user: string, pwd: string, database: string): ConnOutPool;
+    async conn(host: string, port: number, user: string, pwd: string, database: string): ConnOutPool;
 
     /**
      * do select in a random one-off conn with quickConnConfig
@@ -450,7 +455,7 @@ export interface Db {
      * @async
      * @returns {Promise<Array<Map<dbname,string>>>} a promise, if success, it would be a list of dbnames and the key is "dbname"
      */
-    async getDbs(): Promise<Array<Map<dbname,string>>>;
+    async getDbs(): Promise<Array<Map<dbname, string>>>;
 
     /**
      * get tables' name from a db, running with a random one-off conn
@@ -458,7 +463,7 @@ export interface Db {
      * @param {string|undefined|null|""} dbname - the name of the db you want to get all tables' name from. If you assign it with undefined, null, "" or don't pass it, the function will use this conn's default database
      * @returns {Promise<Array<Map<tbname,string>>>} a promise, if success, it would be a list of tbnames and the key is "tbname"
      */
-    async getTbs(dbname: string|undefined|null|""): Promise<Array<Map<tbname,string>>>;
+    async getTbs(dbname: string | undefined | null | ""): Promise<Array<Map<tbname, string>>>;
 
     /**
      * get a tables' struct, running with a random one-off conn
@@ -466,7 +471,7 @@ export interface Db {
      * @param {!string} tbname - the name of the that you want to its construction
      * @returns {Promise<Array<Map<dbname,string>>>} a promise, if success, it would be a list of db names and the key is "dbname"
      */
-    async getTbStruct(tbname: string): Promise<Array<Map<dbname,string>>>;
+    async getTbStruct(tbname: string): Promise<Array<Map<dbname, string>>>;
 
 }
 

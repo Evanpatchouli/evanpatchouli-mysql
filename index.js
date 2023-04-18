@@ -1,7 +1,7 @@
 /**
  * @type {import("./lib/sql.js.js").Db}
  */
-let db = require("./dist/sql.js").default;
+let Db = require("./dist/sql.js").default;
 
 // async function test() {
 //     db.quickConnConfig.database = "springdemo";
@@ -10,4 +10,4 @@ let db = require("./dist/sql.js").default;
 // }
 // test();
 
-module.exports = db;
+module.exports = Db;

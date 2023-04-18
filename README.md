@@ -4,7 +4,14 @@ evanpatchouli-mysql is js-tool for MySQL, whick can help you use MySQL easier in
 
 This tool is at birth and it will grow up fastly in the future.
 
-# Latest Version: 1.0.20
+# Latest Version: 1.0.22
+
+**v1.0.22**:
+- now you can create and use more connection pool rather than only the one default pool.
+- improve the HELP.md.
+- improve the type hint.
+
+**v1.0.21**: a patch
 
 **v1.0.20**:
 - Intelligent Hint
@@ -130,3 +137,7 @@ connection: conn1 in pool persistent
   }
 }
 ```
+
+## More
+
+More usage can be saw in HELP.md

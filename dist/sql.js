@@ -218,7 +218,7 @@ var showTbStruct = function showTbStruct(conn, tbname, type) {
     });
   });
 };
-var getConnFromPool = function getConnFromPool() {
+var getConnFromPool = function getConnFromPool(pool) {
   return new Promise(function (resolve, reject) {
     pool.sqlpool.getConnection(function (err, conn) {
       if (err) {
@@ -230,13 +230,13 @@ var getConnFromPool = function getConnFromPool() {
   });
 };
 var poolDirectAction = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(actionfx, sql) {
+  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(pool, actionfx, sql) {
     var conn;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
           _context.next = 2;
-          return getConnFromPool();
+          return getConnFromPool(pool);
         case 2:
           conn = _context.sent;
           return _context.abrupt("return", actionfx(conn, sql, "once"));
@@ -246,14 +246,14 @@ var poolDirectAction = /*#__PURE__*/function () {
       }
     }, _callee);
   }));
-  return function poolDirectAction(_x, _x2) {
+  return function poolDirectAction(_x, _x2, _x3) {
     return _ref.apply(this, arguments);
   };
 }();
 
 /**
  * an Object packaged with a poolConnection and some methods
- * @typedef {Pool}
+ * @type {import("./sql.js").Pool}
  * @property {PoolConfig} config
  * @property {} sqlpool
  * @property {method} init
@@ -271,7 +271,7 @@ var poolDirectAction = /*#__PURE__*/function () {
 var pool = {
   /**
    * the config of pool conn
-   * @type {PoolConfig}
+   * @type {import("./sql.js").PoolConfig}
    */
   config: {
     host: undefined,
@@ -331,13 +331,14 @@ var pool = {
    * @param {!string} sql  - select sql
    * @returns {Promise<Array<Object>>} a promise, if success, it would be this sql result (records)
    */
-  sel: function () {
-    var _sel = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(sql) {
+  sel: function sel(sql) {
+    var _this = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return poolDirectAction(doSelect, sql);
+            return poolDirectAction(_this.sqlpool, doSelect, sql);
           case 2:
             return _context2.abrupt("return", _context2.sent);
           case 3:
@@ -345,12 +346,8 @@ var pool = {
             return _context2.stop();
         }
       }, _callee2);
-    }));
-    function sel(_x3) {
-      return _sel.apply(this, arguments);
-    }
-    return sel;
-  }(),
+    }))();
+  },
   /**
    * do update with a one-off conn in pool
    * @async
@@ -364,7 +361,7 @@ var pool = {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
             _context3.next = 2;
-            return poolDirectAction(doUpdate, sql);
+            return poolDirectAction(_this2.sqlpool, doUpdate, sql);
           case 2:
             return _context3.abrupt("return", _context3.sent);
           case 3:
@@ -391,7 +388,7 @@ var pool = {
         while (1) switch (_context4.prev = _context4.next) {
           case 0:
             _context4.next = 2;
-            return poolDirectAction(doInsert, sql);
+            return poolDirectAction(_this2.sqlpool, doInsert, sql);
           case 2:
             return _context4.abrupt("return", _context4.sent);
           case 3:
@@ -418,7 +415,7 @@ var pool = {
         while (1) switch (_context5.prev = _context5.next) {
           case 0:
             _context5.next = 2;
-            return poolDirectAction(doDelete, sql);
+            return poolDirectAction(_this2.sqlpool, doDelete, sql);
           case 2:
             return _context5.abrupt("return", _context5.sent);
           case 3:
@@ -433,6 +430,7 @@ var pool = {
     return del;
   }(),
   newDb: function newDb(name, character, collation) {
+    var _this3 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
       var sql;
       return _regeneratorRuntime().wrap(function _callee6$(_context6) {
@@ -446,7 +444,7 @@ var pool = {
               sql = sql + " default collate " + collation;
             }
             _context6.next = 5;
-            return poolDirectAction(doFreeSql, sql);
+            return poolDirectAction(_this3.sqlpool, doFreeSql, sql);
           case 5:
             return _context6.abrupt("return", _context6.sent);
           case 6:
@@ -457,6 +455,7 @@ var pool = {
     }))();
   },
   delDb: function delDb(name) {
+    var _this4 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
       var sql;
       return _regeneratorRuntime().wrap(function _callee7$(_context7) {
@@ -464,7 +463,7 @@ var pool = {
           case 0:
             sql = "drop database if exists " + name;
             _context7.next = 3;
-            return poolDirectAction(doFreeSql, sql);
+            return poolDirectAction(_this4.sqlpool, doFreeSql, sql);
           case 3:
             return _context7.abrupt("return", _context7.sent);
           case 4:
@@ -481,6 +480,7 @@ var pool = {
    * @returns {Promise<Array<Map<dbname,string>>} a promise, if success, it would be a list of db names and the key is "dbname"
    */
   getDbs: function getDbs() {
+    var _this5 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
       var sql;
       return _regeneratorRuntime().wrap(function _callee8$(_context8) {
@@ -488,7 +488,7 @@ var pool = {
           case 0:
             sql = "select schema_name as dbname from information_schema.schemata";
             _context8.next = 3;
-            return poolDirectAction(doSelect, sql);
+            return poolDirectAction(_this5.sqlpool, doSelect, sql);
           case 3:
             return _context8.abrupt("return", _context8.sent);
           case 4:
@@ -507,19 +507,19 @@ var pool = {
    * @returns {Promise<Array<Map<tbname,string>>} a promise, if success, it would be a list of table names and the key is "tbname", like [{ tbname: "user" }]
    */
   getTbs: function getTbs(dbname) {
-    var _this = this;
+    var _this6 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
       var sql;
       return _regeneratorRuntime().wrap(function _callee9$(_context9) {
         while (1) switch (_context9.prev = _context9.next) {
           case 0:
             if (dbname == undefined || dbname == "" || dbname == null) {
-              sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + _this.config.database + '\'';
+              sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + _this6.config.database + '\'';
             } else {
               sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + dbname + '\'';
             }
             _context9.next = 3;
-            return poolDirectAction(doSelect, sql);
+            return poolDirectAction(_this6.sqlpool, doSelect, sql);
           case 3:
             return _context9.abrupt("return", _context9.sent);
           case 4:
@@ -575,11 +575,11 @@ var pool = {
         while (1) switch (_context20.prev = _context20.next) {
           case 0:
             _context20.next = 2;
-            return getConnFromPool();
+            return getConnFromPool(_this2.sqlpool);
           case 2:
             newconn = _context20.sent;
             /**
-             * @type {ConnInPool}
+             * @type {import("./sql.js").ConnInPool}
              * @property {import("mysql").Connection} conn  - mysql connection
              * @property {object} config                    - config of this mysql conn and it is changable
              * @property {function} sel                     - do select
@@ -599,7 +599,7 @@ var pool = {
                */
               conn: newconn,
               /**
-               * @type {ConnConfig}
+               * @type {import("./sql.js").ConnConfig}
                */
               config: {
                 host: newconn.config.host,
@@ -616,13 +616,13 @@ var pool = {
                * @returns {Promise<Array<Object>>} a promise, if success, it would be this sql result (records)
                */
               sel: function sel(sql) {
-                var _this3 = this;
+                var _this7 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
                   return _regeneratorRuntime().wrap(function _callee11$(_context11) {
                     while (1) switch (_context11.prev = _context11.next) {
                       case 0:
                         _context11.next = 2;
-                        return doSelect(_this3.conn, sql);
+                        return doSelect(_this7.conn, sql);
                       case 2:
                         return _context11.abrupt("return", _context11.sent);
                       case 3:
@@ -640,13 +640,13 @@ var pool = {
                * @returns {Promise<number>} a promise, if success, it would be = this sql result's affectedRows + changedRows - 1
                */
               upd: function upd(sql) {
-                var _this4 = this;
+                var _this8 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
                   return _regeneratorRuntime().wrap(function _callee12$(_context12) {
                     while (1) switch (_context12.prev = _context12.next) {
                       case 0:
                         _context12.next = 2;
-                        return doUpdate(_this4.conn, sql);
+                        return doUpdate(_this8.conn, sql);
                       case 2:
                         return _context12.abrupt("return", _context12.sent);
                       case 3:
@@ -664,13 +664,13 @@ var pool = {
                * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
                */
               ins: function ins(sql) {
-                var _this5 = this;
+                var _this9 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
                   return _regeneratorRuntime().wrap(function _callee13$(_context13) {
                     while (1) switch (_context13.prev = _context13.next) {
                       case 0:
                         _context13.next = 2;
-                        return doInsert(_this5.conn, sql);
+                        return doInsert(_this9.conn, sql);
                       case 2:
                         return _context13.abrupt("return", _context13.sent);
                       case 3:
@@ -688,13 +688,13 @@ var pool = {
                * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
                */
               del: function del(sql) {
-                var _this6 = this;
+                var _this10 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14() {
                   return _regeneratorRuntime().wrap(function _callee14$(_context14) {
                     while (1) switch (_context14.prev = _context14.next) {
                       case 0:
                         _context14.next = 2;
-                        return doDelete(_this6.conn, sql);
+                        return doDelete(_this10.conn, sql);
                       case 2:
                         return _context14.abrupt("return", _context14.sent);
                       case 3:
@@ -705,7 +705,7 @@ var pool = {
                 }))();
               },
               newDb: function newDb(name, character, collation) {
-                var _this7 = this;
+                var _this11 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15() {
                   var sql;
                   return _regeneratorRuntime().wrap(function _callee15$(_context15) {
@@ -719,7 +719,7 @@ var pool = {
                           sql = sql + " default collate " + collation;
                         }
                         _context15.next = 5;
-                        return doFreeSql(_this7.conn, sql);
+                        return doFreeSql(_this11.conn, sql);
                       case 5:
                         return _context15.abrupt("return", _context15.sent);
                       case 6:
@@ -730,16 +730,16 @@ var pool = {
                 }))();
               },
               delDb: function delDb(name) {
-                var _this8 = this;
+                var _this12 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16() {
                   var sql, newconn;
                   return _regeneratorRuntime().wrap(function _callee16$(_context16) {
                     while (1) switch (_context16.prev = _context16.next) {
                       case 0:
                         sql = "drop database if exists " + name;
-                        newconn = _this8.newconn();
+                        newconn = _this12.newconn();
                         _context16.next = 4;
-                        return doFreeSql(_this8.conn, sql);
+                        return doFreeSql(_this12.conn, sql);
                       case 4:
                         return _context16.abrupt("return", _context16.sent);
                       case 5:
@@ -756,7 +756,7 @@ var pool = {
                * @returns {Promise<Array<Map<dbname,string>>} a promise, if success, it would be a list of db names and the key is "dbname"
                */
               getDbs: function getDbs() {
-                var _this9 = this;
+                var _this13 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17() {
                   var sql;
                   return _regeneratorRuntime().wrap(function _callee17$(_context17) {
@@ -764,7 +764,7 @@ var pool = {
                       case 0:
                         sql = "select schema_name as dbname from information_schema.schemata";
                         _context17.next = 3;
-                        return doSelect(_this9.conn, sql);
+                        return doSelect(_this13.conn, sql);
                       case 3:
                         return _context17.abrupt("return", _context17.sent);
                       case 4:
@@ -783,19 +783,19 @@ var pool = {
                * @returns {Promise<Array<Map<tbname,string>>} a promise, if success, it would be a list of table names and the key is "tbname", like [{ tbname: "user" }]
                */
               getTbs: function getTbs(dbname) {
-                var _this10 = this;
+                var _this14 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18() {
                   var sql;
                   return _regeneratorRuntime().wrap(function _callee18$(_context18) {
                     while (1) switch (_context18.prev = _context18.next) {
                       case 0:
                         if (dbname == undefined || dbname == "" || dbname == null) {
-                          sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + _this10.config.database + '\'';
+                          sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + _this14.config.database + '\'';
                         } else {
                           sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + dbname + '\'';
                         }
                         _context18.next = 3;
-                        return doSelect(_this10.conn, sql);
+                        return doSelect(_this14.conn, sql);
                       case 3:
                         return _context18.abrupt("return", _context18.sent);
                       case 4:
@@ -813,13 +813,13 @@ var pool = {
                * @returns {Promise<Array<Map<any,string>>} construction of a table
                */
               getTbStruct: function getTbStruct(tbname) {
-                var _this11 = this;
+                var _this15 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19() {
                   return _regeneratorRuntime().wrap(function _callee19$(_context19) {
                     while (1) switch (_context19.prev = _context19.next) {
                       case 0:
                         _context19.next = 2;
-                        return showTbStruct(_this11.conn, tbname);
+                        return showTbStruct(_this15.conn, tbname);
                       case 2:
                         return _context19.abrupt("return", _context19.sent);
                       case 3:
@@ -834,7 +834,7 @@ var pool = {
                * @function
                * @param {!string} dbname - the database's name you want switch to use
                */
-              siwtch: function siwtch(dbname) {
+              "switch": function _switch(dbname) {
                 use(this.conn, dbname);
                 this.config.database = dbname;
               },
@@ -871,7 +871,7 @@ var pool = {
 
 /** 
  * @namespace db
- * @type {Db}
+ * @type {import("./sql.js").Db}
  * @property {string} name                  - this object's default name is "db"
  * @property {string} type                  - db's type
  * @property {string} mode                  - db's running mode
@@ -918,9 +918,15 @@ var db = {
     database: undefined
   },
   /** 
-   * @type {Pool}
+   * @type {import("./sql.js").Pool}
    */
-  pool: pool,
+  pool: JSON.parse(JSON.stringify(pool)),
+  /**
+   * @returns {import("./sql.js").Pool}
+   */
+  newPool: function newPool() {
+    return JSON.parse(JSON.stringify(pool));
+  },
   /**
    * a function to print the sql error in console
    * @function
@@ -966,7 +972,7 @@ var db = {
               database: database
             });
             /**
-             * @type {ConnOutPool}
+             * @type {import("./sql.js").ConnOutPool}
              * @property {import("mysql").Connection} conn  - mysql connection
              * @property {object} config                    - config of this mysql conn and it is changable
              * @property {function} sel                     - do select
@@ -985,7 +991,7 @@ var db = {
                */
               conn: newconn,
               /**
-               * @type {ConnConfig}
+               * @type {import("./sql.js").ConnConfig}
                */
               config: {
                 host: host,
@@ -1002,13 +1008,13 @@ var db = {
                * @returns {Promise<Array<Object>>} a promise, if success, it would be this sql result (records)
                */
               sel: function sel(sql) {
-                var _this12 = this;
+                var _this16 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21() {
                   return _regeneratorRuntime().wrap(function _callee21$(_context21) {
                     while (1) switch (_context21.prev = _context21.next) {
                       case 0:
                         _context21.next = 2;
-                        return doSelect(_this12.conn, sql);
+                        return doSelect(_this16.conn, sql);
                       case 2:
                         return _context21.abrupt("return", _context21.sent);
                       case 3:
@@ -1026,13 +1032,13 @@ var db = {
                * @returns {Promise<number>} a promise, if success, it would be = this sql result's affectedRows + changedRows - 1
                */
               upd: function upd(sql) {
-                var _this13 = this;
+                var _this17 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22() {
                   return _regeneratorRuntime().wrap(function _callee22$(_context22) {
                     while (1) switch (_context22.prev = _context22.next) {
                       case 0:
                         _context22.next = 2;
-                        return doUpdate(_this13.conn, sql);
+                        return doUpdate(_this17.conn, sql);
                       case 2:
                         return _context22.abrupt("return", _context22.sent);
                       case 3:
@@ -1050,13 +1056,13 @@ var db = {
                * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
                */
               ins: function ins(sql) {
-                var _this14 = this;
+                var _this18 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee23() {
                   return _regeneratorRuntime().wrap(function _callee23$(_context23) {
                     while (1) switch (_context23.prev = _context23.next) {
                       case 0:
                         _context23.next = 2;
-                        return doInsert(_this14.conn, sql);
+                        return doInsert(_this18.conn, sql);
                       case 2:
                         return _context23.abrupt("return", _context23.sent);
                       case 3:
@@ -1074,13 +1080,13 @@ var db = {
                * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
                */
               del: function del(sql) {
-                var _this15 = this;
+                var _this19 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee24() {
                   return _regeneratorRuntime().wrap(function _callee24$(_context24) {
                     while (1) switch (_context24.prev = _context24.next) {
                       case 0:
                         _context24.next = 2;
-                        return doDelete(_this15.conn, sql);
+                        return doDelete(_this19.conn, sql);
                       case 2:
                         return _context24.abrupt("return", _context24.sent);
                       case 3:
@@ -1091,7 +1097,7 @@ var db = {
                 }))();
               },
               newDb: function newDb(name, character, collation) {
-                var _this16 = this;
+                var _this20 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee25() {
                   var sql;
                   return _regeneratorRuntime().wrap(function _callee25$(_context25) {
@@ -1105,7 +1111,7 @@ var db = {
                           sql = sql + " default collate " + collation;
                         }
                         _context25.next = 5;
-                        return doFreeSql(_this16.conn, sql);
+                        return doFreeSql(_this20.conn, sql);
                       case 5:
                         return _context25.abrupt("return", _context25.sent);
                       case 6:
@@ -1116,7 +1122,7 @@ var db = {
                 }))();
               },
               delDb: function delDb(name) {
-                var _this17 = this;
+                var _this21 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee26() {
                   var sql;
                   return _regeneratorRuntime().wrap(function _callee26$(_context26) {
@@ -1124,7 +1130,7 @@ var db = {
                       case 0:
                         sql = "drop database if exists " + name;
                         _context26.next = 3;
-                        return doFreeSql(_this17.conn, sql);
+                        return doFreeSql(_this21.conn, sql);
                       case 3:
                         return _context26.abrupt("return", _context26.sent);
                       case 4:
@@ -1141,7 +1147,7 @@ var db = {
                * @returns {Promise<Array<Map<dbname,string>>} a promise, if success, it would be a list of db names and the key is "dbname"
                */
               getDbs: function getDbs() {
-                var _this18 = this;
+                var _this22 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee27() {
                   var sql;
                   return _regeneratorRuntime().wrap(function _callee27$(_context27) {
@@ -1149,7 +1155,7 @@ var db = {
                       case 0:
                         sql = "select schema_name as dbname from information_schema.schemata";
                         _context27.next = 3;
-                        return doSelect(_this18.conn, sql);
+                        return doSelect(_this22.conn, sql);
                       case 3:
                         return _context27.abrupt("return", _context27.sent);
                       case 4:
@@ -1167,19 +1173,19 @@ var db = {
                * @returns {Promise<Array<Map<tbname,string>>} a promise, if success, it would be a list of table names and the key is "tbname", like [{ tbname: "user" }]
                */
               getTbs: function getTbs(dbname) {
-                var _this19 = this;
+                var _this23 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee28() {
                   var sql;
                   return _regeneratorRuntime().wrap(function _callee28$(_context28) {
                     while (1) switch (_context28.prev = _context28.next) {
                       case 0:
                         if (dbname == undefined || dbname == "" || dbname == null) {
-                          sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + _this19.config.database + '\'';
+                          sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + _this23.config.database + '\'';
                         } else {
                           sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + dbname + '\'';
                         }
                         _context28.next = 3;
-                        return doSelect(_this19.conn, sql);
+                        return doSelect(_this23.conn, sql);
                       case 3:
                         return _context28.abrupt("return", _context28.sent);
                       case 4:
@@ -1196,13 +1202,13 @@ var db = {
                * @returns {Promise<Array<Map<any,string>>} construction of a table
                */
               getTbStruct: function getTbStruct(tbname) {
-                var _this20 = this;
+                var _this24 = this;
                 return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee29() {
                   return _regeneratorRuntime().wrap(function _callee29$(_context29) {
                     while (1) switch (_context29.prev = _context29.next) {
                       case 0:
                         _context29.next = 2;
-                        return showTbStruct(_this20.conn, tbname);
+                        return showTbStruct(_this24.conn, tbname);
                       case 2:
                         return _context29.abrupt("return", _context29.sent);
                       case 3:
@@ -1217,7 +1223,7 @@ var db = {
                * @function
                * @param {!string} dbname - the database's name you want switch to use
                */
-              siwtch: function siwtch(dbname) {
+              "switch": function _switch(dbname) {
                 use(this.conn, dbname);
                 this.config.database = dbname;
               },
@@ -1231,7 +1237,7 @@ var db = {
               }
             };
             /**
-             * @type {ConnOutPool}
+             * @type {import("./sql.js").ConnOutPool}
              */
             return _context30.abrupt("return", conntmp);
           case 3:
@@ -1253,13 +1259,13 @@ var db = {
    * @returns {Promise<Array<Object>>} a promise, if success, it would be this sql result (records)
    */
   sel: function sel(sql) {
-    var _this21 = this;
+    var _this25 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee31() {
       var newconn;
       return _regeneratorRuntime().wrap(function _callee31$(_context31) {
         while (1) switch (_context31.prev = _context31.next) {
           case 0:
-            newconn = _this21.newconn();
+            newconn = _this25.newconn();
             _context31.next = 3;
             return doSelect(newconn, sql, "once");
           case 3:
@@ -1279,13 +1285,13 @@ var db = {
    * @returns {Promise<number>} a promise, if success, it would be = this sql result's affectedRows + changedRows - 1
    */
   upd: function upd(sql) {
-    var _this22 = this;
+    var _this26 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee32() {
       var newconn;
       return _regeneratorRuntime().wrap(function _callee32$(_context32) {
         while (1) switch (_context32.prev = _context32.next) {
           case 0:
-            newconn = _this22.newconn();
+            newconn = _this26.newconn();
             _context32.next = 3;
             return doUpdate(newconn, sql, "once");
           case 3:
@@ -1305,13 +1311,13 @@ var db = {
    * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
    */
   ins: function ins(sql) {
-    var _this23 = this;
+    var _this27 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee33() {
       var newconn;
       return _regeneratorRuntime().wrap(function _callee33$(_context33) {
         while (1) switch (_context33.prev = _context33.next) {
           case 0:
-            newconn = _this23.newconn();
+            newconn = _this27.newconn();
             _context33.next = 3;
             return doInsert(newconn, sql, "once");
           case 3:
@@ -1331,13 +1337,13 @@ var db = {
    * @returns {Promise<number>} a promise, if success, it would be this sql result's affectedRows
    */
   del: function del(sql) {
-    var _this24 = this;
+    var _this28 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee34() {
       var newconn;
       return _regeneratorRuntime().wrap(function _callee34$(_context34) {
         while (1) switch (_context34.prev = _context34.next) {
           case 0:
-            newconn = _this24.newconn();
+            newconn = _this28.newconn();
             _context34.next = 3;
             return doDelete(newconn, sql, "once");
           case 3:
@@ -1355,13 +1361,13 @@ var db = {
    * @returns 
    */
   sql: function sql(_sql) {
-    var _this25 = this;
+    var _this29 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee35() {
       var newconn;
       return _regeneratorRuntime().wrap(function _callee35$(_context35) {
         while (1) switch (_context35.prev = _context35.next) {
           case 0:
-            newconn = _this25.newconn();
+            newconn = _this29.newconn();
             _context35.next = 3;
             return doFreeSql(newconn, _sql, "once");
           case 3:
@@ -1374,7 +1380,7 @@ var db = {
     }))();
   },
   newDb: function newDb(name, character, collation) {
-    var _this26 = this;
+    var _this30 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee36() {
       var sql, newconn;
       return _regeneratorRuntime().wrap(function _callee36$(_context36) {
@@ -1387,7 +1393,7 @@ var db = {
             if (collation != null) {
               sql = sql + " default collate " + collation;
             }
-            newconn = _this26.newconn();
+            newconn = _this30.newconn();
             _context36.next = 6;
             return doFreeSql(newconn, sql, "once");
           case 6:
@@ -1400,14 +1406,14 @@ var db = {
     }))();
   },
   delDb: function delDb(name) {
-    var _this27 = this;
+    var _this31 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee37() {
       var sql, newconn;
       return _regeneratorRuntime().wrap(function _callee37$(_context37) {
         while (1) switch (_context37.prev = _context37.next) {
           case 0:
             sql = "drop database if exists " + name;
-            newconn = _this27.newconn();
+            newconn = _this31.newconn();
             _context37.next = 4;
             return doFreeSql(newconn, sql, "once");
           case 4:
@@ -1426,14 +1432,14 @@ var db = {
    * @returns {Promise<Array<Map<dbname,string>>} a promise, if success, it would be a list of dbnames and the key is "dbname"
    */
   getDbs: function getDbs() {
-    var _this28 = this;
+    var _this32 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee38() {
       var sql, newconn;
       return _regeneratorRuntime().wrap(function _callee38$(_context38) {
         while (1) switch (_context38.prev = _context38.next) {
           case 0:
             sql = "select schema_name as dbname from information_schema.schemata";
-            newconn = _this28.newconn();
+            newconn = _this32.newconn();
             _context38.next = 4;
             return doSelect(newconn, sql, "once");
           case 4:
@@ -1453,19 +1459,19 @@ var db = {
    * @returns {Promise<Array<Map<tbname,string>>} a promise, if success, it would be a list of tbnames and the key is "tbname"
    */
   getTbs: function getTbs(dbname) {
-    var _this29 = this;
+    var _this33 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee39() {
       var sql;
       return _regeneratorRuntime().wrap(function _callee39$(_context39) {
         while (1) switch (_context39.prev = _context39.next) {
           case 0:
             if (dbname == undefined || dbname == "" || dbname == null) {
-              sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + _this29.quickConnConfig.database + '\'';
+              sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + _this33.quickConnConfig.database + '\'';
             } else {
               sql = 'select table_name as tbname from information_schema.tables Where table_schema = ' + '\'' + dbname + '\'';
             }
             _context39.next = 3;
-            return doSelect(_this29.newconn(), sql, "once");
+            return doSelect(_this33.newconn(), sql, "once");
           case 3:
             return _context39.abrupt("return", _context39.sent);
           case 4:
@@ -1483,13 +1489,13 @@ var db = {
    * @returns {Promise<Array<Map<dbname,string>>} a promise, if success, it would be a list of db names and the key is "dbname"
    */
   getTbStruct: function getTbStruct(tbname) {
-    var _this30 = this;
+    var _this34 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee40() {
       var newconn;
       return _regeneratorRuntime().wrap(function _callee40$(_context40) {
         while (1) switch (_context40.prev = _context40.next) {
           case 0:
-            newconn = _this30.newconn();
+            newconn = _this34.newconn();
             _context40.next = 3;
             return showTbStruct(newconn, tbname, "once");
           case 3:
@@ -1517,7 +1523,7 @@ var db = {
 // rs = await db.pool.getTbs();
 
 // let conn = await db.pool.conn();
-// conn.siwtch("springdemo");
+// conn.switch("springdemo");
 // rs = await conn.getTbs();
 
 // console.log(rs);

@@ -4,312 +4,211 @@ evanpatchouli-mysql is js-tool for MySQL, whick can help you use MySQL easier in
 
 This tool is at birth and it will grow up fastly in the future.
 
-# Latest Version: 1.0.18
+## Useage
 
-**v1.0.18**: add two functions: **newDb** and **delDb**
-
-**v1.0.17**: a patch, export bug has been fixed
-
-**v1.0.16**: a patch
-
-**v1.0.15**: a patch
-
-**v1.0.14**: a patch
-
-**v1.0.13**: 
-
-**JsDoc** has been added!
-
-**v1.0.12**: 
-
-**Compiled into CommonJs:** since v1.0.11, the sql.js module will be compiled into commonjs by babel, and you can enjoy it with both of cjs and mjs. 
-
-**Standardlize:** the function name in conn, pool and db. One of my friend told me that the name "get" confused him to think it as "get a connection", and this is just when I realized that I should make the names more clear and easy at the same time.
-
-**One New Feature:** the db has mode! It has two options: "debug" and "non-debug", you can set it at db.mode, the "non-debug" mode only returns one of the entire mysql.js result, and "debug" mode returns entirely, with the sql str and some message printed in console working like sql log.
-
-**One New Change:** under "non-debug" mode, the action like **update**, **insert**, **delete** will all return one number, and the meanings are a bit different between them: **upd**, return the result = affectedRows + changedRows - 1, and it's easy to understand the three value of it, 1 means success, 0 means the new is the same as new, -1 means the target record doesn't exist.**insert** and **delete** return affectedRows, 1 means success and 0 instead.
-
-# Install
-
-```shell
-npm install evanpatchouli-mysql
-```
-
-# Code Resource
-https://github.com/Evanpatchouli/evanpatchouli-mysql
-
-# Useage
+**Tip:** now we only support raw sql so you need to write raw sql string.
 
 **Tip:** the sql-action is a packaged Promise, I suggest to use **'async / await'**, but raw Promise also works if you prefer it.
 
-## Separate Introduction
-type: "Moudle"  
+## Examples
 
-```javascript
-import db from "evanpatchouli-mysql/lib/sql.js";
-```
+**Tip:** in this doc:
 
-type: "CommonJs"  
+- conn means connection
+- db means db(Object) or database
+- Db means Db/db(Oject)
+- tb means table
+- quick sql: the quick means the conn used is once-
+- tmp means temporary
 
-```javascript
-let db = require("../index.js");
-```
+### Db
 
+The root object to provide this package sql services
 
-### quick sql
+#### Db.quickConnConfig
 
-```javascript
-let result = db.sel('select * from user');
-```
-
-### sql in a quick persistent conn
-
-```javascript
-let conn = await db.conn("localhost", 3306, "root", "root", "springdemo");
-let result = conn.get('select * from user');
-```
-
-### close a conn
-
-```javascript
-conn.close();
-```
-
-### init connection pool
-
-```javascript
-// example db.pool.init(host, port, user, password, database)
-db.pool.init('localhost',3306,'root','root','springdemo');
-```
-
-### quick sql in pool
-
-```javascript
-let result = db.pool.select('select * from user')
-```
-
-### do sql in a certain conn in pool
-
-```javascript
-let conn = db.pool.conn();
-let result = conn.select('select * from user')
-```
-
-### close pool
-
-```javascript
-db.pool.close();
-```
-
-## Complete example demos
-
-these codes below are running in "non-debug" mode
-
-```javascript
-// example sql actions
-// TEST0 does three things: 
-// 1. Show the quick sql's conn' config
-// 2. Do a quick sql: db.get(sql) means select. (sel => select / upd => update / ins => insert / del => delete)
-// 3. Get a quick conn named 'conn0' and do quick sql in this conn, and close it after i finish my works.
-async function tset() {
-    console.log('======================================TEST0======================================')
-    // db.mode = "debug";
-    db.quickConnConfig.database = 'springdemo';
-    console.log('the default config of db\'s quick connection:')
-    console.log(db.quickConnConfig,'\n')
-
-    let x = await db.sel('select * from user');
-    console.log('under: your default config.database => springdemo')
-    console.log('connection: random once')
-    console.log(x,'\n');
-
-    let conn0 = await db.conn("localhost", 3306, "root", "root", "springdemo");
-    x = await conn0.sel('select * from userinfo');
-    conn0.close();
-    console.log('connection: random persistent')
-    console.log(x);
-// TEST1 three things:  
-// 1. Init the pool without selected database
-// 2. switch to a database named 'mysql'
-// 3. do a quick sql in the pool and its conn will close automaticly.
-    console.log('======================================TEST1======================================')
-
-    db.pool.init("localhost", 3306, "root", "root", "");
-    console.log('pool: init')
-
-    db.pool.switch('mysql')
-    console.log('pool: db switch to mysql')
-
-    let res = await db.pool.sel("select User from db limit 1")
-
-    console.log('under: mysql')
-    console.log('connection: random in pool persistent')
-    console.log(res)
-// TEST2 three things:  
-// 1. get a conn from the pool, and name it as 'conn1'
-// 2. switch to a database named 'springdemo'
-// 3. do a quick sql-select in this conn in the pool
-    console.log('======================================TEST2======================================')
-
-    let conn1 = await db.pool.conn();
-
-    // switch db
-    conn1.siwtch("springdemo");
-    console.log('pool: db switch to springdemo')
-
-    // select all tables' name in springdemo db
-    let sql2 ='select TABLE_NAME AS \'name\' from information_schema.tables where table_schema=\'springdemo\'';
-    res = await conn1.sel(sql2);
-
-    console.log('under: springdemo')
-    console.log('connection: conn1 in pool persistent')
-    console.log(res);
-
-    console.log('======================================TEST3======================================')
-
-    // select user in springdemo
-    let sql3 = 'select * from user'
-    res = await conn1.sel(sql3);
-
-    console.log('under: springdemo')
-    console.log('connection: conn1 in pool persistent')
-    console.log(res);
-
-    console.log('======================================TEST4======================================')
-
-    // update user in springdemo
-    let sql4 = 'update user set name=\'user3\' where id=5'
-    res = await conn1.upd(sql4);
-
-    console.log('under: springdemo')
-    console.log('connection: conn1 in pool persistent')
-    console.log(res);
-
-    console.log('======================================TEST5======================================')
-
-    // insert user into springdemo
-    let sql5 = 'insert into user (name,pwd) values (\'user3\',\'userpwd\')'
-    res = await conn1.ins(sql5);
-
-    console.log('under: springdemo')
-    console.log('connection: conn1 in pool persistent')
-    console.log(res);
-
-    console.log('======================================TEST6======================================')
-// TEST6 three things:  
-// 1. do a quick sql-delete in this conn in the pool
-// 2. close conn1
-// 3. close pool
-    // delete user from springdemo
-    let sql6 = 'delete from user where name=\'user3\' or name=\'user4\''
-    res = await conn1.del(sql6);
-
-    console.log('under: springdemo')
-    console.log('connection: conn1 in pool persistent')
-    console.log(res);
-    conn1.close();
-    db.pool.close();
-}
-test();
-```
-
-### Result : Output
-
-exit in 0.363 seconds, so it looks not so bad.
-
-**non-debug mode:**
-
-```javascript
-======================================TEST0======================================
-the default config of db's quick connection:
-{
+This is the default `quickConnConfig` of Db.
+```js
+quickConnConfig: {
   host: 'localhost',
   port: 3306,
   user: 'root',
   password: 'root',
-  database: 'springdemo'
-} 
+  /**
+  * @type {string|undefined|null}
+  */
+  database: undefined
+},
+```
+You should init it before use it to sql.
+```js
+Db.quickConnConfig.database = "speingdemo";
+```
+Everytime you do a quick sql in Db, Db will use this config to create a tmp conn to sql and close this conn then.
 
-under: your default config.database => springdemo
-connection: random once
+#### Db.mode
+
+The default mode is `"non-debug"`, you can change it to `"debug"`.  
+**Notice**: under `"debug"` mode ,the struct of result returned by sql method will be different.
+
+### Db quick sql
+
+#### `async` Db.ins(sql: string) => Promise<number>
+
+It will return the affected rows amount, the sql following returns 1 if success.
+```js
+let rs = await Db.ins("insert into user (id,username) values(1,'user1')");
+```
+
+#### `async` Db.upd(sql: string) => Promise<number>
+
+It will return the affected rows amount, the sql following returns 1 if success.
+```js
+let rs = await Db.upd("update user set password='root' where id=1");
+```
+
+#### `async` Db.sel(sql: string) => Promise<[{k,v}]>
+
+It will return the record list
+```js
+let rs = await db.sel("select * from user");
+```
+rs just like:
+```shell
 [
-  { id: 1, name: 'admin', pwd: 'ROOT' },
-  { id: 2, name: 'user', pwd: 'ruanyi' },
-  { id: 3, name: 'user2', pwd: '123456' },
-  { id: 6, name: 'user5', pwd: '123456' },
-  { id: 7, name: 'user6', pwd: '123456' },
-  { id: 8, name: 'user7', pwd: '123456' },
-  { id: 9, name: 'user8', pwd: '123456' },
-  { id: 10, name: 'user9', pwd: '123456' }
+  { id: 1, name: 'user1', pwd: 'root' },
 ] 
-
-Ok, this conn has been destroyed
-connection: random persistent
-[
-  { id: 1, nick: 'evanpatchouli', phone: '19999999999' },
-  { id: 2, nick: 'ruanyi', phone: '19999999998' },
-  { id: 3, nick: '默认昵称', phone: '00000000000' }
-]
-======================================TEST1======================================
-pool: init
-pool: db switch to mysql
-under: mysql
-connection: random in pool persistent
-[ { User: 'mysql.session' } ]
-======================================TEST2======================================
-pool: db switch to springdemo
-under: springdemo
-connection: conn1 in pool persistent
-[ { name: 'user' }, { name: 'userinfo' } ]
-======================================TEST3======================================
-under: springdemo
-connection: conn1 in pool persistent
-[
-  { id: 1, name: 'admin', pwd: 'ROOT' },
-  { id: 2, name: 'user', pwd: 'ruanyi' },
-  { id: 3, name: 'user2', pwd: '123456' },
-  { id: 6, name: 'user5', pwd: '123456' },
-  { id: 7, name: 'user6', pwd: '123456' },
-  { id: 8, name: 'user7', pwd: '123456' },
-  { id: 9, name: 'user8', pwd: '123456' },
-  { id: 10, name: 'user9', pwd: '123456' }
-]
-======================================TEST4======================================
-under: springdemo
-connection: conn1 in pool persistent
--1
-======================================TEST5======================================
-under: springdemo
-connection: conn1 in pool persistent
-1
-======================================TEST6======================================
-under: springdemo
-connection: conn1 in pool persistent
-1
-Ok, this conn has been destroyed
-Ok, this pool has been closed
-
-[Done] exited with code=0 in 0.363 seconds
 ```
 
-**debug mode:**
+#### `async` Db.newDb(name: string, character: string, collation: string) => Promise<?>
 
-```javascript
-sql: insert into user (name,pwd) values ('user3','userpwd')
-under: springdemo
-connection: conn1 in pool persistent
-{
-  sql: "insert into user (name,pwd) values ('user3','userpwd')",
-  res: {
-    fieldCount: 0,
-    affectedRows: 1,
-    insertId: 17,
-    serverStatus: 2,
-    warningCount: 0,
-    message: '',
-    protocol41: true,
-    changedRows: 0
-  }
-}
+It will return the result of creating the new database
+```js
+let rs = await Db.newDb("tmpdb", "utf8", "utf8_general_ci");
 ```
+
+#### `async` Db.delDb(name: string) => Promise<?>
+
+It will return the result of deleting the database
+```js
+let rs = await Db.delDb("tmpdb");
+```
+
+#### `async` Db.sql(sql: string) => Promise<?>
+
+It will do this sql and return the raw result without dealing
+```js
+let rs = await Db.sql("select * from user");
+```
+
+#### `async` Db.getDbs() => Promise<[{k:'dbname',v:string}]>
+
+It will return all db name as dbname
+```js
+let rs = await Db.getDbs();
+```
+
+#### `async` Db.getTbs() => Promise<[{k:'tbname',v:string}]>
+
+It will return all tb name as tbname
+```js
+let rs = await Db.getTbs();
+```
+
+#### `async` Db.getTbStruct(tbname: string) => Promise<[{k:'tbname',v:string}]>
+
+It will return this table struct.
+```js
+let rs = await Db.getTbStruct("user");
+```
+
+#### Db.conn() => 'sql.js'.ConnOutPool
+
+you will get an object containing a persistent conn.
+```js
+let conn = Db.conn();
+```
+
+#### Db.pool => 'sql.js'.Pool
+
+The default Pool object in Db, and you can use it to do sql after initlization.  
+More information will be introduced following.
+
+#### Db.newPool() => 'sql.js'.Pool
+
+you will get a new Pool object containing a connection pool in Db.  
+before you use it should you init the pool conn.
+```js
+let pool = Db.newPool();
+```
+
+### Conn
+
+The sql action is just same as Db, the difference is that you should **not forget to close/release** the conn if you have finished all you affairs.
+
+And there are some more method:
+
+#### Conn.switch(dbname: string) => void
+
+switch this conn to use another database
+```js
+let conn = Db.conn();
+conn.switch("tmpdb2");
+```
+
+#### Conn.free() => void
+
+**release** this conn
+```js
+conn.free();
+```
+
+#### Conn.close() => void
+
+**destroy** this conn
+```js
+conn.close();
+```
+
+### Pool
+
+The sql action is just same as Db and Conn, and you should **not forget to close/release** the conn in pool if you have finished all you affairs.
+
+#### Pool.init(options: PoolConfig) => void
+
+Before you use any Pool, you should init it at first.
+```js
+Db.pool.init(
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  pwd: "root",
+  database: "springdemo",
+  connlimit: 10
+);
+```
+If you don't give the database and connlimit or gives them as `null` or `""` or `undefined`, the database will be `undefined` and connlimit will be `10`.
+
+#### Pool.switch(tbname: string) => void
+
+switch this pool to use another database as default databse
+```js
+let conn = await Db.conn();
+conn.switch("tmpdb2");
+```
+
+#### Pool.close() => void
+
+Close the conn pool.
+```js
+Db.pool.close();
+```
+If you want to reconnect the default or separate conn Pool, you can init it again.
+
+#### Pool.conn() => ConnInPool
+
+you can use this method to get a conn from a Pool with the similar config as Pool's.
+```js
+let pool_conn = Db.pool.conn();
+```
+This conn is a Conn and its usages are same as above.
